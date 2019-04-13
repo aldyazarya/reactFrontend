@@ -1,13 +1,13 @@
 import React, { Component } from 'react'
 
-class Profile extends Component {
+class Logout extends Component {
     render(){
         return(
             <div>
-                <h1 className='display-4'>Hello from Profile</h1>
+                <h1 className='display-4'>Hello from Logout</h1>
             </div>
         )
     }
 }
 
-export default Profile;
+export default Logout;

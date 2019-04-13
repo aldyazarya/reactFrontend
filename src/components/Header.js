@@ -1,12 +1,12 @@
-import React, { Component } from 'react'
-import {Link} from 'react-router-dom'
-import {connect} from 'react-redux';
+import React, { Component } from 'react';
+import {Link} from 'react-router-dom';
+import {connect} from 'react-redux'
+
 import {
     Button,
     Collapse,
     DropdownToggle,
     DropdownMenu,
-    DropdownItem,
     NavbarBrand,
     Navbar,
     NavbarToggler, 
@@ -15,26 +15,29 @@ import {
     UncontrolledDropdown
     } from 'reactstrap';
 
+import {onLogoutUser} from '../actions/index'
+    
 class Header extends Component {
     constructor(props) {
         super(props);
-    
-        this.toggle = this.toggle.bind(this);
+
+         this.toggle = this.toggle.bind(this);
         this.state = {
-          dropdownOpen: false
+            isOpen: false
         };
     }
-    
-      toggle() {
-        this.setState(prevState => ({
-          dropdownOpen: !prevState.dropdownOpen
+
+       toggle() {
+        this.setState(({
+            isOpen: !this.state.isOpen
         }));
       }
 
-
+    
+    
     render() {
-
         const {user} = this.props
+
         if(user.name === ''){
             return (
                 <div>
@@ -59,9 +62,8 @@ class Header extends Component {
                     </Navbar>
                 </div>
             )
-        } else {
-            return(
-                <div>
+        } return (
+            <div>
                     <Navbar color="light" light expand="md">
                         <div className="container">
                             <NavbarBrand href="/">ReactMongoose</NavbarBrand>
@@ -72,15 +74,14 @@ class Header extends Component {
                                         <Link className="nav-link" to="/">Tasks</Link>
                                     </NavItem>
                                     <UncontrolledDropdown nav inNavbar>
-                                        <DropdownToggle nav caret>
-                                            Hallo {user.name}
+                                        <DropdownToggle nav caret className="text-capitalize">
+                                            Welcome, {user.name}
                                         </DropdownToggle>
                                         <DropdownMenu right>
-                                        <Link className="dropdown-item" to="/profile">
-                                            <DropdownItem>Profile</DropdownItem>
-                                        </Link>
-                                        <DropdownItem divider />
-                                        <Button className="dropdown-item" onClick={this.props.onLogout}>
+                                        <Link to="/profile"><Button className="dropdown-item">
+                                            Profile
+                                        </Button></Link>
+                                        <Button className="dropdown-item" onClick={this.props.onLogoutUser}>
                                             Log out
                                         </Button>
                                         
@@ -91,13 +92,12 @@ class Header extends Component {
                         </div>
                     </Navbar>
                 </div>
-            )
-        }
+          );
     }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
     return {user: state.auth}
 }
 
-export default connect (mapStateToProps)(Header)
+export default connect (mapStateToProps, {onLogoutUser})(Header);

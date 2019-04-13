@@ -1,11 +1,9 @@
-import React, { Component } from 'react'
-import {Link} from 'react-router-dom'
+import React, { Component } from 'react';
+import {Link} from 'react-router-dom';
+import {onRegister} from '../actions'
 import {connect} from 'react-redux'
 
-import {onRegister} from '../actions';
-
 class Register extends Component {
-
     onButtonClick = () => {
         const name = this.name.value
         const age = this.age.value
@@ -13,7 +11,6 @@ class Register extends Component {
         const pass = this.password.value
         this.props.onRegister(name, age, email, pass)
     }
-
 
     render() {
         return (
@@ -53,4 +50,4 @@ class Register extends Component {
     }
 }
 
-export default connect (null, {onRegister}) (Register)
+export default connect(null,{onRegister})(Register);
