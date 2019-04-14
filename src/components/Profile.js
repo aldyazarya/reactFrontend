@@ -50,12 +50,13 @@ class Profile extends Component {
           <li class="list-group-item pl-0">{`Age: ${age}`}</li>
           <li class="list-group-item pl-0">{`Email: ${email}`}</li>
           <li class="list-group-item px-0">
-            <div class="d-flex justify-content-between">
+            <div class="d-flex ">
               <Button
                 onClick={() => {
                   this.setState({ edit: !this.state.edit });
                 }}
                 color="outline-warning"
+                className="mr-3"
               >
                 Edit
               </Button>
@@ -147,16 +148,13 @@ class Profile extends Component {
     if (cookie.get("idLogin")) {
       return (
         <div className="container">
-          <div class="card w-25">
-            <img
-              src={`http://localhost:2009/users/${cookie.get(
-                "idLogin"
-              )}/avatar`}
-              class="card-img-top"
+          <div >
+            <img src={`http://localhost:2009/users/${cookie.get("idLogin")}/avatar`}
+              
               alt="..."
             />
 
-            <div class="card-body">
+            <div >
               <div className="custom-file">
                 <input
                   type="file"
@@ -164,8 +162,8 @@ class Profile extends Component {
                   ref={input => (this.gambar = input)}
                 />
               </div>
-              <div class="d-flex justify-content-between">
-                <Button color="primary" onClick={() => this.uploadAvatar()}>
+              <div class="d-flex">
+                <Button color="primary" onClick={() => this.uploadAvatar()} className="mr-3">
                   Upload
                 </Button>
                 <Button
