@@ -15,7 +15,7 @@ import {
     UncontrolledDropdown
     } from 'reactstrap';
 
-import {onLogoutUser} from '../actions/index'
+import {onLogoutUser} from '../actions'
     
 class Header extends Component {
     constructor(props) {

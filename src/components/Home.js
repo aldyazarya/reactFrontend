@@ -22,6 +22,8 @@ class Home extends Component {
         try {
             const res = await axios.get(`/tasks/${cookie.get('idLogin')}`)
             this.setState({tasks: res.data})
+            console.log(res);
+            
         } catch (e) {
             console.log(e);
         }

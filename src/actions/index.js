@@ -24,12 +24,14 @@ export const onLoginClick = (email, password) => {
 
             cookie.set('masihLogin', res.data.name, { path: '/' })
             cookie.set('idLogin', res.data._id, { path: '/' })
+            cookie.set('email', res.data.email, { path: '/' })
+            cookie.set('age', res.data.age, { path: '/' })
 
 
             dispatch({
                 type: 'LOGIN_SUCCESS',
                 payload: {
-                    id: res.data._id, name: res.data.name
+                    id: res.data._id, name: res.data.name, email: res.data.email, age: res.data.age
                 }
             })
 
@@ -40,20 +42,24 @@ export const onLoginClick = (email, password) => {
     }
 }
 
-export const keepLogin = (name, id) => {
-    if(name === undefined && id === undefined){
+export const keepLogin = (name, id, email, age) => {
+    if(name === undefined && id === undefined && email === undefined && age === undefined){
         return{
             type: 'KEEP_LOGIN',
             payload: {
                 id: '',
-                name: ''
+                name: '',
+                email:'',
+                age: ''
             }
         } 
     }return{
         type: 'KEEP_LOGIN',
         payload: {
             id, 
-            name
+            name,
+            email,
+            age
         }
     }
 }
@@ -61,5 +67,7 @@ export const keepLogin = (name, id) => {
 export const onLogoutUser = (name, id) => {
     cookie.remove('masihLogin')
     cookie.remove('idLogin')
+    cookie.remove('email')
+    cookie.remove('age')
     return {type: 'LOGOUT_USER'}
 }
