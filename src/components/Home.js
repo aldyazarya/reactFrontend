@@ -35,18 +35,57 @@ class Home extends Component {
     }
 
     renderList = () => {
-        return this.state.tasks.map (task => {
-            return (
-                <li onDoubleClick={() => {this.onDouble(task._id, this.props.id)}} className="list-group-item d-flex justify-content-between row-hl" key={task._id}>
-                <span className="item-hl">{task.description}</span>
 
-                 <span className="item-hl">
-                <button className='btn btn-outline-primary' onClick={() => {this.doneTask(task._id, this.props.id)}}>Done</button>
+    
+        return this.state.tasks.map(task => {
+          if (task.completed === false) {
+            return (
+              <li
+                onDoubleClick={() => {
+                  this.onDouble(task._id, this.props.id);
+                }}
+                className="list-group-item d-flex justify-content-between row-hl"
+                key={task._id}
+              >
+                <span className="item-hl">{task.description}</span>
+    
+                <span className="item-hl">
+                  <button
+                    className="btn btn-primary"
+                    onClick={() => {
+                      this.doneTask(task._id, this.props.id);
+                    }}
+                  >
+                    sudah
+                  </button>
                 </span>
-                </li>
+              </li>
             );
-        })
-    }
+          }
+          return (
+            <li
+              onDoubleClick={() => {
+                this.onDouble(task._id, this.props.id);
+              }}
+              className="list-group-item d-flex justify-content-between row-hl"
+              key={task._id}
+            >
+              <span className="item-hl">{task.description}</span>
+    
+              <span className="item-hl">
+                <button
+                  className="btn btn-warning"
+                  onClick={() => {
+                    this.notYetTask(task._id, this.props.id);
+                  }}
+                >
+                  belum
+                </button>
+              </span>
+            </li>
+          );
+        });
+      };
 
     addTask = async (userid) => {
         const description = this.task.value
@@ -67,6 +106,17 @@ class Home extends Component {
         try {
            await axios.patch(`/tasks/${taskid}/${userid}`, {
                completed: true
+           })
+           this.getTasks()
+        } catch (e) {
+            console.log(e);
+        }
+    }
+
+    notYetTask = async (taskid, userid) => {
+        try {
+           await axios.patch(`/tasks/${taskid}/${userid}`, {
+               completed: false
            })
            this.getTasks()
         } catch (e) {
