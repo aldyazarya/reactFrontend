@@ -15,7 +15,7 @@ import {
     UncontrolledDropdown
     } from 'reactstrap';
 
-import {onLogoutUser} from '../actions'
+import {logout} from '../actions'
     
 class Header extends Component {
     constructor(props) {
@@ -81,7 +81,7 @@ class Header extends Component {
                                         <Link to="/profile"><Button className="dropdown-item">
                                             Profile
                                         </Button></Link>
-                                        <Button className="dropdown-item" onClick={this.props.onLogoutUser}>
+                                        <Button className="dropdown-item" onClick={this.props.logout}>
                                             Log out
                                         </Button>
                                         
@@ -100,4 +100,4 @@ const mapStateToProps = (state) => {
     return {user: state.auth}
 }
 
-export default connect (mapStateToProps, {onLogoutUser})(Header);
+export default connect (mapStateToProps, {logout})(Header);

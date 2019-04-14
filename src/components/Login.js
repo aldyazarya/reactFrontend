@@ -2,14 +2,14 @@ import React, { Component } from 'react';
 import {Link, Redirect} from 'react-router-dom';
 import {connect} from 'react-redux'
 
-import {onLoginClick} from '../actions'
+import {onLogin} from '../actions'
 
 
 class Login extends Component {
     onSubmitClick = () => {
         const email = this.email.value
         const password = this.password.value
-        this.props.onLoginClick(email, password)
+        this.props.onLogin(email, password)
       }
 
     render() {
@@ -50,4 +50,4 @@ const mapStateToProps = (state) => {
     return {user: state.auth}
 }
 
-export default connect(mapStateToProps, {onLoginClick})(Login);
+export default connect(mapStateToProps, {onLogin})(Login);

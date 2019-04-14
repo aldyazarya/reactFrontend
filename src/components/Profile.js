@@ -1,123 +1,199 @@
-import React, { Component } from 'react'
-import {Button} from 'reactstrap';
-import {connect} from 'react-redux'
+import React, { Component } from "react";
+import { Button } from "reactstrap";
+import { Redirect } from "react-router-dom";
+import cookies from "universal-cookie";
+import axios from "../config/axios";
+import { connect } from "react-redux";
+import swal from 'sweetalert';
 
-import axios from '../config/axios'
+import { onEdit, logout } from "../actions/index";
 
-import Cookies from 'universal-cookie';
-
-
-const cookie = new Cookies()
-
+const cookie = new cookies();
 
 class Profile extends Component {
-    state = {
-        users: []
-    }
-    
-    getName = async () => {
-        try {
-            const res = await axios.get(`/users/${cookie.get('idLogin')}`)
-            this.setState({users: res.data})
-            console.log(res);
-            
-        } catch (e) {
-            console.log(e);  
+  state = {
+    edit: true
+  };
+
+  uploadAvatar = async () => {
+    const formData = new FormData();
+    var imagefile = this.gambar;
+
+    formData.append("avatar", imagefile.files[0]);
+    try {
+      await axios.post(`/users/${cookie.get("idLogin")}/avatar`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data"
         }
+      });
+    } catch (e) {
+      console.log("upload gagal");
     }
+  };
 
-    componentDidMount () {
-        this.getName()
+  deleteAvatar = async userId => {
+    try {
+      axios.patch(`/avatar/${userId}`, {
+        avatar: null
+      });
+    } catch (e) {
+      console.log(e);
     }
+  };
 
-    renderList = () => {
-        return this.state.users.map (user => {
-            return (
-                <h1>{user.name}</h1>
-            )
-        })
+  profile = () => {
+    const { name, age, id, email } = this.props.user;
+    if (this.state.edit) {
+      return (
+        <div>
+          <li class="list-group-item pl-0">{`Name: ${name}`}</li>
+          <li class="list-group-item pl-0">{`Age: ${age}`}</li>
+          <li class="list-group-item pl-0">{`Email: ${email}`}</li>
+          <li class="list-group-item px-0">
+            <div class="d-flex justify-content-between">
+              <Button
+                onClick={() => {
+                  this.setState({ edit: !this.state.edit });
+                }}
+                color="outline-warning"
+              >
+                Edit
+              </Button>
+              <Button
+                onClick={() => {
+                  this.deleteProfile(this.props.user.id);
+                }}
+                color="outline-danger"
+              >
+                Delete
+              </Button>
+            </div>
+          </li>
+        </div>
+      );
     }
+    return (
+      <div>
+        <li class="list-group-item pl-0">
+          <input
+            type="text"
+            class="form-control"
+            ref={input => {
+              this.name = input;
+            }}
+            defaultValue={name}
+          />
+        </li>
+        <li class="list-group-item pl-0">
+          <input
+            type="number"
+            class="form-control"
+            ref={input => {
+              this.age = input;
+            }}
+            defaultValue={age}
+          />
+        </li>
+        <li class="list-group-item pl-0">
+          <input
+            type="text"
+            class="form-control"
+            ref={input => {
+              this.email = input;
+            }}
+            defaultValue={email}
+          />
+        </li>
+        <li class="list-group-item px-0">
+          <div class="d-flex justify-content-center">
+            <Button
+              onClick={() => {
+                this.saveProfile(id);
+              }}
+              color="outline-primary"
+            >
+              save
+            </Button>
+          </div>
+        </li>
+      </div>
+    );
+  };
 
-
-    avatarUpload = async (userid) => {
-        const formData = new FormData()
-        var imagefile = this.gambar
-        formData.append('avatar', imagefile.files[0])
-        try {
-            await axios.post(`/users/${userid}/avatar`, formData, {
-                headers: {
-                    'Content-Type' : 'multipart/form-data'
-                }
-            })
-            console.log("berhasil upload file");
-            
-        } catch (e) {
-            console.log(e);
-            
-        }
-    }
-
-    avatarDeleted = async (userid) => {
-        try {
-            await axios.delete(`/users/${userid}/avatar`)
-            console.log("berhasil delete");
-            
-        } catch (e) {
-            console.log(e);
-            
-        }
-    }
-
-    UserDeleted = async (userid) => {
-        try {
-            await axios.delete(`/users/${userid}`)
-            console.log("berhasil delete user");
-            
-            cookie.remove('masihLogin')
-            cookie.remove('idLogin')
-            cookie.remove('email')
-            cookie.remove('age')
-        } catch (e) {
-            console.log(e);
+  deleteProfile = async userId => {
+    try {
+        const willDelete = await axios.delete(`/users/${userId}/delete`);
         
+        if(willDelete) {
+            swal("User Deleted!", "You clicked the button!", "success");
         }
+
+          this.props.logout();
+
+    } catch (e) {
+      console.log(e);
     }
-    
-    render() {
-        if(cookie.get('idLogin')){
-            return (
-                <div className="container">
-                    <img alt="img" src={`http://localhost:2009/users/${this.props.id}/avatar`}/>
-                    <br/>
-                    <br/>
-                    <div className="custom-file">
-                        <input type="file" id="myfile" ref={input => this.gambar = input}/>
-                    </div>
-                    <Button color="primary" onClick={() => this.avatarUpload(this.props.id)}>Upload</Button>
-                    <Button color="danger" onClick={() => this.avatarDeleted(this.props.id)}>Delete</Button>
-                    <hr/>
-                    <h1>name:</h1>
-                    <div>{this.renderList()}</div>
-                    {/* <h1>email:</h1>
-                    <h3> {this.props.email}</h3>
-                    <h1>age:</h1>
-                    <h3>{this.props.age}</h3>  */}
-                    
-                    <Button color="warning" onClick={() => this.UserDeleted(this.props.id)}>Delete User</Button>
-    
-                </div>
-            )
-        }
+  };
+
+  saveProfile = async userId => {
+    const name = this.name.value;
+    const age = this.age.value;
+    const email = this.email.value;
+    this.props.onEdit(name, age, userId, email);
+    this.setState({ edit: !this.state.edit });
+  };
+
+  render() {
+    if (cookie.get("idLogin")) {
+      return (
+        <div className="container">
+          <div class="card w-25">
+            <img
+              src={`http://localhost:2009/users/${cookie.get(
+                "idLogin"
+              )}/avatar`}
+              class="card-img-top"
+              alt="..."
+            />
+
+            <div class="card-body">
+              <div className="custom-file">
+                <input
+                  type="file"
+                  id="myfile"
+                  ref={input => (this.gambar = input)}
+                />
+              </div>
+              <div class="d-flex justify-content-between">
+                <Button color="primary" onClick={() => this.uploadAvatar()}>
+                  Upload
+                </Button>
+                <Button
+                  color="danger"
+                  onClick={() => {
+                    this.deleteAvatar(this.props.user.id);
+                  }}
+                >
+                  Delete
+                </Button>
+              </div>
+
+              <ul class="list-group list-group-flush mt-3">{this.profile()}</ul>
+            </div>
+          </div>
+        </div>
+      );
     }
+
+    return <Redirect to="login" />;
+  }
 }
 
-const mps = state => {
-    return {
-      id: state.auth.id,
-      name: state.auth.name,
-      email: state.auth.email,
-      age: state.auth.age
-     
-    };
-  };
-export default connect(mps)(Profile)
+const mapStateToProps = state => {
+  return { user: state.auth };
+};
+
+export default connect(
+  mapStateToProps,
+  { onEdit, logout }
+)(Profile);

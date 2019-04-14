@@ -29,15 +29,15 @@ class Home extends Component {
         }
     }
 
-    onDouble = async (taskid) => {
-        await axios.delete('/tasks',{data: {id: taskid}})
+    onDouble = async (taskid, owner) => {
+        await axios.delete('/tasks',{data: {taskid, owner}})
         this.getTasks()
     }
 
     renderList = () => {
         return this.state.tasks.map (task => {
             return (
-                <li onDoubleClick={() => {this.onDouble(task._id)}} className="list-group-item d-flex justify-content-between row-hl" key={task._id}>
+                <li onDoubleClick={() => {this.onDouble(task._id, this.props.id)}} className="list-group-item d-flex justify-content-between row-hl" key={task._id}>
                 <span className="item-hl">{task.description}</span>
 
                  <span className="item-hl">
