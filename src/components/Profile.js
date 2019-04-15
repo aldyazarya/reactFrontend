@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Button } from "reactstrap";
-import { Redirect } from "react-router-dom";
+import { Link, Redirect } from "react-router-dom";
 import cookies from "universal-cookie";
 import axios from "../config/axios";
 import { connect } from "react-redux";
@@ -33,7 +33,7 @@ class Profile extends Component {
 
   deleteAvatar = async userId => {
     try {
-      axios.patch(`/avatar/${userId}`, {
+      axios.delete(`/users/${userId}/avatar`, {
         avatar: null
       });
     } catch (e) {
@@ -46,10 +46,10 @@ class Profile extends Component {
     if (this.state.edit) {
       return (
         <div>
-          <li class="list-group-item pl-0">{`Name: ${name}`}</li>
-          <li class="list-group-item pl-0">{`Age: ${age}`}</li>
-          <li class="list-group-item pl-0">{`Email: ${email}`}</li>
-          <li class="list-group-item px-0">
+          <h3 class=" pl-0">{`Name: ${name}`}</h3>
+          <h3 class=" pl-0">{`Age: ${age}`}</h3>
+          <h3 class=" pl-0">{`Email: ${email}`}</h3>
+          <div class=" px-0">
             <div class="d-flex ">
               <Button
                 onClick={() => {
@@ -69,7 +69,7 @@ class Profile extends Component {
                 Delete
               </Button>
             </div>
-          </li>
+          </div>
         </div>
       );
     }
@@ -128,8 +128,9 @@ class Profile extends Component {
         if(willDelete) {
             swal("User Deleted!", "You clicked the button!", "success");
         }
-
-          this.props.logout();
+        setTimeout(() => {
+            this.props.logout();
+        }, 2000);
 
     } catch (e) {
       console.log(e);
@@ -147,7 +148,7 @@ class Profile extends Component {
   render() {
     if (cookie.get("idLogin")) {
       return (
-        <div className="container">
+        <div className="container mt-5">
           <div >
             <img src={`http://localhost:2009/users/${cookie.get("idLogin")}/avatar`}
               
@@ -163,6 +164,7 @@ class Profile extends Component {
                 />
               </div>
               <div class="d-flex">
+              
                 <Button color="primary" onClick={() => this.uploadAvatar()} className="mr-3">
                   Upload
                 </Button>
